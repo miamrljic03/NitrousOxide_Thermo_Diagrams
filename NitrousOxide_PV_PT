@@ -1,0 +1,100 @@
+#N2O Thermo Property Diagram Generator
+#v0.0.0 release: MiaMrljic
+
+#this program generates a PV and PT diagram for nitrous oxide
+#data is taken from cool prop, and is shown to have reasonable agreement with the NIST chemistry webbook
+#cool prop only supports the liquid vapour regions of nitrous oxide properties, so only liquid vapour saturation data is shown
+#greater accuracy can be read from the charts with the cursor, but they are primarily for concept design use
+#refer to the NIST webbook or specific coolprop call for more precise design values
+
+from CoolProp.CoolProp import PropsSI
+import CoolProp.CoolProp as CP
+import numpy as np
+import matplotlib.pyplot as plt
+
+#in K, Pa, and m3/kg
+#later converted to C, psi, and g/cm3 (density)
+Tmin = (-90)+273.15
+Tmax = (34.5+50)+273.15
+
+Pmin = 87837.4
+Pmax = 7.245e6
+
+vmin = 1/PropsSI('D','P',Pmin,'T',Tmin,'N2O')
+vmax = 1/PropsSI('D','P',Pmax,'T',Tmax,'N2O')
+
+#retrieving saturation curves only - Pv diagram
+pRange = np.linspace(Pmin,Pmax,num=1000)
+vf = np.array([])
+vg = np.array([])
+for i in range(len(pRange)):
+    vf1 = 1/PropsSI('D','P',pRange[i],'Q',0,'N2O')
+    vg1 = 1/PropsSI('D','P',pRange[i],'Q',1,'N2O')
+    vf = np.append(vf,vf1)
+    vg = np.append(vg,vg1)
+
+#adding 10, 20, and 30C isotherms
+T10 = 10+273.15
+v10 = np.array([])
+P10 = PropsSI('P','T',T10,'Q',0,'N2O')
+vf10 = 1/PropsSI('D','T',T10,'Q',0,'N2O')
+vg10 = 1/PropsSI('D','T',T10,'Q',1,'N2O')
+for i in range(len(pRange)):
+    v10a = 1/PropsSI('D','P',pRange[i],'T',T10,'N2O')
+    v10 = np.append(v10,v10a)
+
+T20 = 20+273.15
+v20 = np.array([])
+P20 = PropsSI('P','T',T20,'Q',0,'N2O')
+vf20 = 1/PropsSI('D','T',T20,'Q',0,'N2O')
+vg20 = 1/PropsSI('D','T',T20,'Q',1,'N2O')
+for i in range(len(pRange)):
+    v20a = 1/PropsSI('D','P',pRange[i],'T',T20,'N2O')
+    v20 = np.append(v20,v20a)
+
+T30 = 30+273.15
+v30 = np.array([])
+P30 = PropsSI('P','T',T30,'Q',0,'N2O')
+vf30 = 1/PropsSI('D','T',T30,'Q',0,'N2O')
+vg30 = 1/PropsSI('D','T',T30,'Q',1,'N2O')
+for i in range(len(pRange)):
+    v30a = 1/PropsSI('D','P',pRange[i],'T',T30,'N2O')
+    v30 = np.append(v30,v30a)
+
+#annotate the diagram
+plt.figure(1)
+plt.scatter(1/vf/1000,pRange*0.000145038,s=1,c='blue')
+plt.scatter(1/vg/1000,pRange*0.000145038,s=1,c='cyan')
+plt.scatter(1/v10/1000,pRange*0.000145038,s=1,c='pink')
+plt.scatter(1/v20/1000,pRange*0.000145038,s=1,c='red')
+plt.scatter(1/v30/1000,pRange*0.000145038,s=1,c='magenta')
+plt.plot([1/vf10/1000,1/vg10/1000],[P10*0.000145038,P10*0.000145038],c='pink')
+plt.plot([1/vf20/1000,1/vg20/1000],[P20*0.000145038,P20*0.000145038],c='red')
+plt.plot([1/vf30/1000,1/vg30/1000],[P30*0.000145038,P30*0.000145038],c='magenta')
+plt.text((1/vf10/1000-1/vg10/1000)/2,P10*0.000145038-100,'L+V')
+plt.text((1/vf10/1000+0.3),P10*0.000145038-100,'V')
+plt.text((1/vg10/1000-0.15),P10*0.000145038-100,'L')
+plt.text((1/vf10/1000-1/vg10/1000)/2,P10*0.000145038+10,'10C')
+plt.text((1/vf10/1000-1/vg10/1000)/2,P20*0.000145038+10,'20C')
+plt.text((1/vf10/1000-1/vg10/1000)/2,P30*0.000145038+10,'30C')
+plt.xlabel('Density (g/cm3)')
+plt.ylabel('Pressure (psi)')
+plt.title('Liquid/Vapour PV Diagram - N2O')
+plt.show()
+
+#retrieving saturation curves only - PT diagram
+pRange = np.linspace(Pmin,Pmax,num=1000)
+T = np.array([])
+for i in range(len(pRange)):
+    T1 = PropsSI('T','P',pRange[i],'Q',0.5,'N2O')
+    T = np.append(T,T1)
+
+#annotate the diagram
+plt.figure(2)
+plt.scatter(T-273.15,pRange*0.000145038,s=1,c='green')
+plt.text(-60,600,'L')
+plt.text(20,200,'V')
+plt.xlabel('Temperature (C)')
+plt.ylabel('Pressure (psi)')
+plt.title('Liquid/Vapour PT Diagram - N2O')
+plt.show()
