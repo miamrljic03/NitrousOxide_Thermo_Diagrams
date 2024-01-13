@@ -23,7 +23,7 @@ Pmax = 7.245e6
 vmin = 1/PropsSI('D','P',Pmin,'T',Tmin,'N2O')
 vmax = 1/PropsSI('D','P',Pmax,'T',Tmax,'N2O')
 
-#retrieving saturation curves only - Pv diagram
+#retrieving saturation curves only - Pv diagram - PD diagram
 pRange = np.linspace(Pmin,Pmax,num=1000)
 vf = np.array([])
 vg = np.array([])
@@ -72,14 +72,14 @@ plt.plot([1/vf10/1000,1/vg10/1000],[P10*0.000145038,P10*0.000145038],c='pink')
 plt.plot([1/vf20/1000,1/vg20/1000],[P20*0.000145038,P20*0.000145038],c='red')
 plt.plot([1/vf30/1000,1/vg30/1000],[P30*0.000145038,P30*0.000145038],c='magenta')
 plt.text((1/vf10/1000-1/vg10/1000)/2,P10*0.000145038-100,'L+V')
-plt.text((1/vf10/1000+0.3),P10*0.000145038-100,'V')
-plt.text((1/vg10/1000-0.15),P10*0.000145038-100,'L')
+plt.text((1/vf10/1000+0.3),P10*0.000145038-100,'L')
+plt.text((1/vg10/1000-0.15),P10*0.000145038-100,'V')
 plt.text((1/vf10/1000-1/vg10/1000)/2,P10*0.000145038+10,'10C')
 plt.text((1/vf10/1000-1/vg10/1000)/2,P20*0.000145038+10,'20C')
 plt.text((1/vf10/1000-1/vg10/1000)/2,P30*0.000145038+10,'30C')
 plt.xlabel('Density (g/cm3)')
 plt.ylabel('Pressure (psi)')
-plt.title('Liquid/Vapour PV Diagram - N2O')
+plt.title('Liquid/Vapour PD Diagram - N2O')
 plt.show()
 
 #retrieving saturation curves only - PT diagram
